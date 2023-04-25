@@ -1,21 +1,10 @@
 version: 2.1
 
-executors:
-  python-executor:
-    docker:
-      - image: python:3.9
-    environment:
-      FLASK_APP: app.py
-      FLASK_ENV: testing
-      DATABASE_URL: postgresql://postgres:12345@localhost:5432/apidashboarddb
-    working_directory: /testAPIProject
-
 jobs:
   build:
-    executor: python-executor
+    docker:
+      - image: python:3.9
     steps:
-      - setup_remote_docker:
-          version: 20.10.7
       - checkout
       - run:
           name: Install dependencies
@@ -36,6 +25,9 @@ jobs:
           command: |
             python app.py &
       - run:
-          name: Run tests
-          command: |
-            pytest
+          name: Run Selenium tests
+          command: pytest tests/user-manage_test.py
+          environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: 12345
+            POSTGRES_DB: apidashboarddb
