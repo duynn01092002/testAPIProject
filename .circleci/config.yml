@@ -9,10 +9,6 @@ executors:
       FLASK_ENV: testing
       DATABASE_URL: postgresql://postgres:12345@localhost:5432/apidashboarddb
     working_directory: /testAPIProject
-  selenium-executor:
-    docker:
-      - image: selenium/standalone-chrome
-    working_directory: /testAPIProject
 
 jobs:
   build:
@@ -26,28 +22,20 @@ jobs:
           command: |
             pip install -r requirements.txt
       - run:
+          name: Install and configure Selenium
+          command: |
+            pip install selenium
+            # Cài đặt trình điều khiển trình duyệt (vd: Chrome)
+            wget https://chromedriver.storage.googleapis.com/VERSION_NUMBER/chromedriver_linux64.zip
+            unzip chromedriver_linux64.zip
+            mv chromedriver /usr/local/bin/
+            # Cấu hình Selenium để sử dụng trình điều khiển trình duyệt
+            export PATH=$PATH:/usr/local/bin/
+      - run:
           name: Start Flask app
           command: |
             python app.py &
       - run:
           name: Run tests
-          command: |
-            pytest
-  e2e:
-    executor: selenium-executor
-    steps:
-      - setup_remote_docker:
-          version: 20.10.7
-      - checkout
-      - run:
-          name: Install dependencies
-          command: |
-            pip install -r requirements.txt
-      - run:
-          name: Start Flask app
-          command: |
-            python app.py &
-      - run:
-          name: Run Selenium tests
           command: |
             pytest
