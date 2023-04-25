@@ -26,9 +26,13 @@ jobs:
           command: |
             pip install -r requirements.txt
       - run:
+          name: Start Flask app
+          command: |
+            python app.py &
+      - run:
           name: Run tests
           command: |
-            python -m unittest discover tests
+            pytest
   e2e:
     executor: selenium-executor
     steps:
