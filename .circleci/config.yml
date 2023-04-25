@@ -15,16 +15,6 @@ executors:
     working_directory: /testAPIProject
 
 jobs:
-  build:
-    executor: python-executor
-    steps:
-      - setup_remote_docker:
-          version: 20.10.7
-      - checkout
-      - run:
-          name: Install dependencies
-          command: |
-            pip install -r requirements.txt
   e2e:
     executor: selenium-executor
     steps:
@@ -43,3 +33,14 @@ jobs:
           name: Run Selenium tests
           command: |
             pytest
+  build:
+    executor: python-executor
+    steps:
+      - setup_remote_docker:
+          version: 20.10.7
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            pip install -r requirements.txt
+  
